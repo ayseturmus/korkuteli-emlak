@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700&family=Manrope:wght@400;500;700&family=Bebas+Neue&display=swap');
+
+:root {
+  --brand-yellow: #ffcc00;
+  --brand-yellow-soft: #ffd966;
+  --brand-black: #0f1115;
+  --brand-white: #ffffff;
+  --brand-gray: #4f5b6d;
+  --surface: #f7f8fa;
+  --surface-soft: #eef1f5;
+  --ink: #111827;
+  --ink-muted: #4b5567;
+  --line: #d7dde6;
+  --shadow-soft: 0 10px 24px rgba(17, 24, 39, 0.08);
+
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+  color: var(--ink);
+  background: var(--surface);
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 10% 12%, rgba(255, 204, 0, 0.08), transparent 38%),
+    linear-gradient(160deg, #f8f9fb 0%, #eef1f5 62%, #f9fafc 100%);
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Alegreya', Georgia, serif;
+  color: var(--ink);
+}
+
+#root {
+  min-height: 100vh;
+}
