@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const API_ROOT = 'http://localhost:4000/api'
+const API_ROOT = 'https://korkuteli-emlak.onrender.com/api'
 const API_LISTINGS = `${API_ROOT}/listings`
 const API_ADMIN_LOGIN = `${API_ROOT}/admin/login`
 const API_ADMIN_VERIFY = `${API_ROOT}/admin/verify`

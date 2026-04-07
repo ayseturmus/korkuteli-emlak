@@ -116,7 +116,7 @@ function HomePage() {
 
     const fetchListings = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/listings')
+        const response = await fetch('https://korkuteli-emlak.onrender.com/api/listings')
         if (!response.ok) {
           throw new Error('İlanlar yüklenemedi.')
         }
