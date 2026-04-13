@@ -1417,6 +1417,16 @@ svg {
   color: #6a7280;
 }
 
+.admin-upload-row {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.admin-upload-row span {
+  font-size: 0.83rem;
+  color: #6a7280;
+}
+
 .admin-form input,
 .admin-form select,
 .admin-form textarea,

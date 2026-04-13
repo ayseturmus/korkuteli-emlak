@@ -1,9 +1,11 @@
 const path = require('path')
+const fs = require('fs')
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
 
 const express = require('express')
 const cors = require('cors')
 const crypto = require('crypto')
+const multer = require('multer')
 const {
   listListings,
   findListingById,
@@ -17,9 +19,40 @@ const port = Number(process.env.PORT) || 4000
 const adminPassword = String(process.env.ADMIN_PASSWORD || 'korkuteli-admin-2026')
 const adminSessionTtlMs = Number(process.env.ADMIN_SESSION_TTL_MS) || 1000 * 60 * 60 * 8
 const adminSessions = new Map()
+const uploadDir = path.resolve(__dirname, '../uploads')
+const maxUploadSizeMb = Number(process.env.MAX_UPLOAD_SIZE_MB) || 5
+const maxUploadSizeBytes = maxUploadSizeMb * 1024 * 1024
+const allowedMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp'])
+
+fs.mkdirSync(uploadDir, { recursive: true })
+
+const uploadStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, uploadDir)
+  },
+  filename: (_req, file, cb) => {
+    const extFromMime = file.mimetype === 'image/png' ? '.png' : file.mimetype === 'image/webp' ? '.webp' : '.jpg'
+    const uniqueName = `${Date.now()}-${crypto.randomBytes(8).toString('hex')}${extFromMime}`
+    cb(null, uniqueName)
+  },
+})
+
+const uploadImage = multer({
+  storage: uploadStorage,
+  limits: { fileSize: maxUploadSizeBytes },
+  fileFilter: (_req, file, cb) => {
+    if (!allowedMimeTypes.has(String(file.mimetype || '').toLowerCase())) {
+      cb(new Error('Sadece JPG, PNG veya WEBP görseller yüklenebilir.'))
+      return
+    }
+
+    cb(null, true)
+  },
+})
 
 app.use(cors())
 app.use(express.json())
+app.use('/uploads', express.static(uploadDir))
 
 const createAdminSession = () => {
   const token = crypto.randomBytes(32).toString('hex')
@@ -111,6 +144,32 @@ app.post('/api/admin/login', (req, res) => {
 
 app.get('/api/admin/verify', requireAdminAuth, (_req, res) => {
   return res.json({ ok: true })
+})
+
+app.post('/api/uploads/image', requireAdminAuth, (req, res) => {
+  uploadImage.single('image')(req, res, (err) => {
+    if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ message: `Gorsel boyutu en fazla ${maxUploadSizeMb} MB olabilir.` })
+    }
+
+    if (err) {
+      return res.status(400).json({ message: err.message || 'Gorsel yuklenemedi.' })
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'Gorsel dosyasi zorunludur.' })
+    }
+
+    const baseUrl = `${req.protocol}://${req.get('host')}`
+    const url = `${baseUrl}/uploads/${req.file.filename}`
+
+    return res.status(201).json({
+      url,
+      filename: req.file.filename,
+      mimeType: req.file.mimetype,
+      size: req.file.size,
+    })
+  })
 })
 
 app.post('/api/listings', requireAdminAuth, (req, res) => {

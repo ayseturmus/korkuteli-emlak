@@ -5,6 +5,7 @@ const API_ROOT = 'https://korkuteli-emlak.onrender.com/api'
 const API_LISTINGS = `${API_ROOT}/listings`
 const API_ADMIN_LOGIN = `${API_ROOT}/admin/login`
 const API_ADMIN_VERIFY = `${API_ROOT}/admin/verify`
+const API_UPLOAD_IMAGE = `${API_ROOT}/uploads/image`
 const ADMIN_TOKEN_KEY = 'korkuteli_admin_token'
 
 const initialForm = {
@@ -42,6 +43,7 @@ function AdminPage() {
   const [editingId, setEditingId] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
 
@@ -89,7 +91,7 @@ function AdminPage() {
         if (isMounted) {
           setIsAuthenticated(true)
         }
-      } catch (_verifyError) {
+      } catch {
         sessionStorage.removeItem(ADMIN_TOKEN_KEY)
         if (isMounted) {
           setToken('')
@@ -274,7 +276,7 @@ function AdminPage() {
     }
 
     if (!form.image.trim()) {
-      setError('Görsel URL zorunludur ve 16:9 oranında olmalıdır.')
+      setError('Görsel zorunludur. Dosya yükleyin veya URL girin.')
       return
     }
 
@@ -323,6 +325,53 @@ function AdminPage() {
       setError(saveError.message)
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files?.[0]
+    if (!file) {
+      return
+    }
+
+    setError('')
+    setNotice('')
+
+    if (!String(file.type || '').startsWith('image/')) {
+      setError('Lütfen yalnızca görsel dosyası seçin.')
+      event.target.value = ''
+      return
+    }
+
+    try {
+      setIsUploadingImage(true)
+      const payload = new FormData()
+      payload.append('image', file)
+
+      const response = await fetch(API_UPLOAD_IMAGE, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: payload,
+      })
+
+      if (response.status === 401) {
+        logout()
+        throw new Error('Oturum süreniz doldu. Tekrar giriş yapın.')
+      }
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}))
+        throw new Error(body.message || 'Görsel yüklenemedi.')
+      }
+
+      const body = await response.json()
+      setForm((prev) => ({ ...prev, image: body.url || '' }))
+      setNotice('Görsel başarıyla yüklendi.')
+    } catch (uploadError) {
+      setError(uploadError.message)
+    } finally {
+      setIsUploadingImage(false)
+      event.target.value = ''
     }
   }
 
@@ -528,8 +577,28 @@ function AdminPage() {
             </label>
 
             <label>
+              Görsel Yükle
+              <div className="admin-upload-row">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleImageUpload}
+                  disabled={isUploadingImage}
+                />
+                <span>{isUploadingImage ? 'Yükleniyor...' : 'Telefon veya bilgisayardan dosya seçin.'}</span>
+              </div>
+              <small>JPG, PNG, WEBP desteklenir. Yükleme sonrası görsel URL otomatik doldurulur.</small>
+            </label>
+
+            <label>
               Görsel URL
-              <input name="image" value={form.image} onChange={setField} required />
+              <input
+                name="image"
+                value={form.image}
+                onChange={setField}
+                placeholder="Dosya yükleyin veya manuel URL girin"
+                required
+              />
               <small>16:9 zorunlu (ör. 1600x900). Bu sayede tüm ilan görselleri eşit ve boşluksuz görünür.</small>
             </label>
 
