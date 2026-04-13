@@ -243,28 +243,6 @@ function AdminPage() {
     }
   }
 
-  const getImageSize = (url) => {
-    return new Promise((resolve, reject) => {
-      const image = new Image()
-      const timeoutId = window.setTimeout(() => {
-        image.src = ''
-        reject(new Error('Görsel doğrulaması zaman aşımına uğradı.'))
-      }, 10000)
-
-      image.onload = () => {
-        window.clearTimeout(timeoutId)
-        resolve({ width: image.naturalWidth, height: image.naturalHeight })
-      }
-
-      image.onerror = () => {
-        window.clearTimeout(timeoutId)
-        reject(new Error('Görsel URL yüklenemedi.'))
-      }
-
-      image.src = url
-    })
-  }
-
   const handleSubmit = async (event) => {
     event.preventDefault()
     setNotice('')
@@ -277,23 +255,6 @@ function AdminPage() {
 
     if (!form.image.trim()) {
       setError('Görsel zorunludur. Dosya yükleyin veya URL girin.')
-      return
-    }
-
-    try {
-      const { width, height } = await getImageSize(form.image.trim())
-      const ratio = width / height
-      const targetRatio = 16 / 9
-      const tolerance = 0.015
-
-      if (Math.abs(ratio - targetRatio) > tolerance) {
-        setError(
-          `Görsel oranı 16:9 olmalıdır. Girilen görsel: ${width}x${height}. Lütfen 1600x900 gibi bir görsel kullanın.`,
-        )
-        return
-      }
-    } catch (validationError) {
-      setError(`Görsel doğrulanamadı: ${validationError.message}`)
       return
     }
 
@@ -599,7 +560,7 @@ function AdminPage() {
                 placeholder="Dosya yükleyin veya manuel URL girin"
                 required
               />
-              <small>16:9 zorunlu (ör. 1600x900). Bu sayede tüm ilan görselleri eşit ve boşluksuz görünür.</small>
+              <small>16:9 önerilir. Sistem görselleri listede 16:9 kutuya otomatik kırpar.</small>
             </label>
 
             <div className="admin-form-grid">
