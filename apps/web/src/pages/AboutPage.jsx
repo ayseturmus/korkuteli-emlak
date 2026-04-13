@@ -1,40 +1,33 @@
 import { Link } from 'react-router-dom'
-
-const BRANCH_IMAGES = {
-  korkuteliOne:
-    'https://korkuteliemlak.com.tr/wp-content/uploads/2025/09/WhatsApp-Image-2025-09-26-at-15.37.23.jpeg',
-  korkuteliTwo:
-    'https://korkuteliemlak.com.tr/wp-content/uploads/2025/09/WhatsApp-Image-2025-09-29-at-21.38.38.jpeg',
-  yelten:
-    'https://korkuteliemlak.com.tr/wp-content/uploads/2025/09/WhatsApp-Image-2025-09-29-at-22.14.38-e1759329777423-1024x734.jpeg',
-  tabela:
-    'https://korkuteliemlak.com.tr/wp-content/uploads/2025/09/WhatsApp-Image-2025-09-25-at-22.32.55-1024x576.jpeg',
-}
+import korkuteliMerkezImage from '../assets/korkuteli merkez.jpeg'
+import bozovaImage from '../assets/Bozova.jpeg'
+import yeltenImage from '../assets/Yelten.jpeg'
+import kurumsalOfisImage from '../assets/kurumsal ofis.jpeg'
 
 const locations = ['Korkuteli', 'Yelten', 'Antalya', 'Bozova']
 
 const aboutCards = [
   {
     title: 'Korkuteli Merkez Şubemiz',
-    image: BRANCH_IMAGES.korkuteliOne,
+    image: korkuteliMerkezImage,
     alt: 'Korkuteli şubemizden dış cephe görünümü',
     text: 'Korkuteli merkezdeki ofisimizde alım, satım ve tapu sürecini baştan sona net bir şekilde yönetiyoruz.',
   },
   {
     title: 'Bozova Şubemizden Görünüm',
-    image: BRANCH_IMAGES.korkuteliTwo,
+    image: bozovaImage,
     alt: 'Bozova şubemizden görünüm',
     text: 'Müşterilerimizi Bozova şubemizde düzenli ve planlı bir şekilde ağırlıyor, süreci anlaşılır bir dille anlatıyoruz.',
   },
   {
     title: 'Yelten Şubemiz',
-    image: BRANCH_IMAGES.yelten,
+    image: yeltenImage,
     alt: 'Yelten şubemiz',
     text: 'Yelten ve çevresindeki arsa, tarla ve yatırım fırsatlarında yerinde destek veriyor, doğru portföy eşleştirmesi yapıyoruz.',
   },
   {
     title: 'Kurumsal Ofis Görselimiz',
-    image: BRANCH_IMAGES.tabela,
+    image: kurumsalOfisImage,
     alt: 'Korkuteli Emlak tabela görseli',
     text: 'Patentli marka kimliğimizle hizmet veriyoruz. Tabelamız, resmi ve güvenilir çalışma anlayışımızın bir göstergesidir.',
   },

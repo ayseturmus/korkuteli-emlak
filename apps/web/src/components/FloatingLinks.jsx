@@ -2,7 +2,7 @@ const links = [
   {
     key: 'emlakjet',
     label: 'Emlakjet',
-    href: 'https://www.emlakjet.com/',
+    href: 'https://www.emlakjet.com/emlak-ofisleri-detay/korkuteli-emlak-1492646',
     className: 'emlakjet',
     icon: 'https://www.google.com/s2/favicons?domain=emlakjet.com&sz=128',
   },
@@ -31,7 +31,7 @@ const links = [
 
 function FloatingLinks() {
   return (
-    <aside className="floating-links" aria-label="Sosyal baglantilar">
+    <aside className="floating-links" aria-label="Sosyal bağlantılar">
       {links.map((item) => (
         <a
           key={item.key}
